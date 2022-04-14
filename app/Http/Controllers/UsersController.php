@@ -6,46 +6,87 @@ use Illuminate\Http\Request;
 
 use App\Models\Users;
 
+use App\Http\Requests\UserRequest;
+
 class UsersController extends Controller
 {
     private $users;
+
+    const __PER_PAGE = 4;
 
     public function __construct(){
         $this->users = new Users();
     }
 
-    public function index(){
+    public function index(Request $request){
         $title = 'Danh sách người dùng';
 
-        $usersList = $this->users->getAllUsers();
+        $filters = [];
 
-        $this->users->learnQueryBuilder();
+        $keywords = null;
 
-        return view('clients.users.list', compact('title', 'usersList'));
+        if(!empty($request->status)){
+            $status = $request->status;
+            if($status=='active'){
+                $status = 1;
+            }else{
+                $status = 0;
+            }
+
+            $filters[] = ['users.status', '=', $status];
+        }
+
+        if(!empty($request->group_id)){
+            $groupId = $request->group_id;
+
+            $filters[] = ['users.group_id', '=', $groupId];
+        }
+
+        if(!empty($request->keyword)){
+            $keywords = $request->keyword;
+        }
+
+        // Xử lý logic sắp xếp
+        $sortBy = $request->input('sort-by');
+        $sortType = $request->input('sort-type');
+
+        $allowSort = ['asc', 'desc'];
+
+        if(!empty($sortType) && in_array($sortType, $allowSort)){
+            if($sortType=='desc'){
+                $sortType = 'asc';
+            }else{
+                $sortType = 'desc';
+            }
+        }else{
+            $sortType = 'asc';
+        }
+
+        $sortArr = [
+            'sortBy' => $sortBy,
+            'sortType' => $sortType,
+        ];
+
+        $usersList = $this->users->getAllUsers($filters, $keywords, $sortArr, self::__PER_PAGE);
+
+        return view('clients.users.list', compact('title', 'usersList', 'sortType'));
     }
 
     public function add(){
         $title = 'Thêm người dùng';
 
-        return view('clients.users.add', compact('title'));
+        $allGroups = getAllGroups();
+
+        return view('clients.users.add', compact('title', 'allGroups'));
     }
 
-    public function postAdd(Request $request){
-        $request->validate([
-            'fullname' => 'required|min:5',
-            'email' => 'required|email|unique:users'
-        ],[
-            'fullname.required' => 'Họ và tên bắt buộc phải nhập',
-            'fullname.min' => 'Họ và tên phải từ :min ký tự trở lên',
-            'email.required' => 'Email bắt buộc phải nhập',
-            'email.email' => 'Email không đúng định dạng',
-            'email.unique' => 'Email đã tồn tại trên hệ thống',
-        ]);
-
+    public function postAdd(UserRequest $request){
         $dataInsert = [
-            $request->fullname,
-            $request->email,
-            date('Y-m-d H:i:s'),
+            'fullname' => $request->fullname,
+            'email' => $request->email,
+            'group_id' => $request->group_id,
+            'status' => $request->status,
+            'create_at' => date('Y-m-d H:i:s'),
         ];
 
         $this->users->addUser($dataInsert);
@@ -69,31 +110,24 @@ class UsersController extends Controller
             return redirect()->route('users.index')->with('msg', 'Liên kết không tồn tại');
         }
 
-        return view('clients.users.edit', compact('title', 'userDetail'));
+        $allGroups = getAllGroups();
+
+        return view('clients.users.edit', compact('title', 'userDetail', 'allGroups'));
     }
 
-    public function postEdit(Request $request, $id=0){
+    public function postEdit(UserRequest $request, $id=0){
         $id = session('id');
 
         if(empty($id)){
             return back()->with('msg', 'Liên kết không tồn tại');
         }
 
-        $request->validate([
-            'fullname' => 'required|min:5',
-            'email' => 'required|email|unique:users,email,'.$id,
-        ],[
-            'fullname.required' => 'Họ và tên bắt buộc phải nhập',
-            'fullname.min' => 'Họ và tên phải từ :min ký tự trở lên',
-            'email.required' => 'Email bắt buộc phải nhập',
-            'email.email' => 'Email không đúng định dạng',
-            // 'email.unique' => 'Email đã tồn tại trên hệ thống',
-        ]);
-
         $dataUpdate = [
-            $request->fullname,
-            $request->email,
-            date('Y-m-d H:i:s'),
+            'fullname' => $request->fullname,
+            'email' => $request->email,
+            'group_id' => $request->group_id,
+            'status' => $request->status,
+            'update_at' => date('Y-m-d H:i:s'),
         ];
 
         $this->users->updateUser($dataUpdate, $id);
