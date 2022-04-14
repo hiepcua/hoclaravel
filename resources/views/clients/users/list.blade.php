@@ -27,6 +27,8 @@
                         <td>{{$item->fullname}}</td>
                         <td>{{$item->email}}</td>
                         <td>{{$item->create_at}}</td>
+                        <td><a href="{{route('users.edit', ['id'=>$item->id])}}" class="btn btn-warning btn-sm">Sửa</a></td>
+                        <td><a href="{{route('users.delete', ['id'=>$item->id])}}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa!')">Xóa</a></td>
                     </tr>
                 @endforeach
             @else
@@ -37,3 +39,10 @@
         </tbody>
     </table>
 @endsection
+{{-- 
+<td><a href="#" class="btn btn-danger btn-edit" onclick="editItem('12345')">Sửa 2</a></td>
+<script>
+    function editItem(id){
+        console.log(111);
+    }
+</script> --}}

@@ -70,6 +70,12 @@ Route::prefix('users')->name('users.')->group(function(){
     Route::get('/add', [UsersController::class, 'add'])->name('add');
 
     Route::post('/add', [UsersController::class, 'postAdd'])->name('postAdd');
+
+    Route::get('edit/{id}', [UsersController::class, 'getEdit'])->name('edit');
+
+    Route::post('update', [UsersController::class, 'postEdit'])->name('post-edit');
+
+    Route::get('/delete/{id}', [UsersController::class, 'delete'])->name('delete');
 });
 
 
