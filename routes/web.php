@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\HomeController;
@@ -8,10 +7,6 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\UsersController;
 
-// Admin
-use App\Http\Controllers\Admin\ProductsController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\HomeController as AdminHomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -103,15 +98,4 @@ Route::prefix('categories')->group(function(){
 
     // Xử lý file
     Route::post('/upload', [CategoriesController::class, 'handleFile'])->name('categories.upload');
-});
-
-// Admin routes
-Route::middleware('auth.admin')->prefix('admin')->group(function(){
-    Route::get('/', [DashboardController::class, 'index']);
-
-    Route::get('/login', [AdminHomeController::class, 'loginForm']);
-
-    Route::post('/login', [DashboardController::class, 'handleLogin']);
-
-    Route::resource('products', ProductsController::class);
 });

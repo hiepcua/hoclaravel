@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use App\View\Components\Alert;
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
 
 // use App\View\Components\Inputs\Button;
@@ -43,6 +44,8 @@ class AppServiceProvider extends ServiceProvider
         //         return false;
         //     }
         // });
+
+        Schema::defaultStringLength(191);
 
         // Blade::if('env', function ($environment) { // @env('local)
         //     // Trả về giá trị boolean

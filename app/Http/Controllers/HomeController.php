@@ -25,7 +25,6 @@ class HomeController extends Controller
         // dd($users);
 
         // return 'Unicode';
-
         return view('clients.home', $this->data);
     }
 
