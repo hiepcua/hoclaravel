@@ -3,19 +3,41 @@
 
  Source Server         : localhost
  Source Server Type    : MySQL
- Source Server Version : 100138
+ Source Server Version : 100418
  Source Host           : localhost:3306
  Source Schema         : hoclaravel
 
  Target Server Type    : MySQL
- Target Server Version : 100138
+ Target Server Version : 100418
  File Encoding         : 65001
 
- Date: 25/06/2022 18:14:36
+ Date: 03/07/2022 16:41:51
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for admins
+-- ----------------------------
+DROP TABLE IF EXISTS `admins`;
+CREATE TABLE `admins`  (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `password` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `admins_email_unique`(`email`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of admins
+-- ----------------------------
+INSERT INTO `admins` VALUES (1, 'Admin', 'admin@admin.com', NULL, '$2y$10$nqYfihdrElbFKk11ieAKP.swls5TM9FkPuJUnEMzVaOC6kd5O0Ab.', NULL, '2022-06-27 10:00:23', '2022-06-27 10:00:23');
 
 -- ----------------------------
 -- Table structure for failed_jobs
@@ -28,10 +50,10 @@ CREATE TABLE `failed_jobs`  (
   `queue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `payload` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `exception` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `failed_jobs_uuid_unique`(`uuid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of failed_jobs
@@ -43,10 +65,10 @@ CREATE TABLE `failed_jobs`  (
 DROP TABLE IF EXISTS `migrations`;
 CREATE TABLE `migrations`  (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `migration` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of migrations
@@ -55,6 +77,12 @@ INSERT INTO `migrations` VALUES (1, '2014_10_12_000000_create_users_table', 1);
 INSERT INTO `migrations` VALUES (2, '2014_10_12_100000_create_password_resets_table', 1);
 INSERT INTO `migrations` VALUES (3, '2019_08_19_000000_create_failed_jobs_table', 1);
 INSERT INTO `migrations` VALUES (4, '2019_12_14_000001_create_personal_access_tokens_table', 1);
+INSERT INTO `migrations` VALUES (5, '2022_06_27_083200_create_admins_table', 1);
+INSERT INTO `migrations` VALUES (6, '2022_06_28_083355_create_roles_table', 2);
+INSERT INTO `migrations` VALUES (7, '2022_06_28_095341_create_permissions_table', 2);
+INSERT INTO `migrations` VALUES (8, '2022_06_28_095656_create_users_permission_table', 2);
+INSERT INTO `migrations` VALUES (9, '2022_06_28_095815_create_users_roles_table', 2);
+INSERT INTO `migrations` VALUES (10, '2022_06_28_100301_create_roles_permissions_table', 2);
 
 -- ----------------------------
 -- Table structure for password_resets
@@ -65,10 +93,27 @@ CREATE TABLE `password_resets`  (
   `token` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   INDEX `password_resets_email_index`(`email`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of password_resets
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for permissions
+-- ----------------------------
+DROP TABLE IF EXISTS `permissions`;
+CREATE TABLE `permissions`  (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of permissions
 -- ----------------------------
 
 -- ----------------------------
@@ -88,60 +133,42 @@ CREATE TABLE `personal_access_tokens`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `personal_access_tokens_token_unique`(`token`) USING BTREE,
   INDEX `personal_access_tokens_tokenable_type_tokenable_id_index`(`tokenable_type`, `tokenable_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of personal_access_tokens
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for tbl_groups
+-- Table structure for roles
 -- ----------------------------
-DROP TABLE IF EXISTS `tbl_groups`;
-CREATE TABLE `tbl_groups`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+DROP TABLE IF EXISTS `roles`;
+CREATE TABLE `roles`  (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of tbl_groups
+-- Records of roles
 -- ----------------------------
-INSERT INTO `tbl_groups` VALUES (1, 'Administrator');
-INSERT INTO `tbl_groups` VALUES (2, 'Admin');
-INSERT INTO `tbl_groups` VALUES (3, 'Content');
 
 -- ----------------------------
--- Table structure for tbl_users
+-- Table structure for roles_permissions
 -- ----------------------------
-DROP TABLE IF EXISTS `tbl_users`;
-CREATE TABLE `tbl_users`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `group_id` int NULL DEFAULT NULL,
-  `fullname` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
-  `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
-  `create_at` timestamp NULL DEFAULT NULL,
-  `update_at` timestamp NULL DEFAULT NULL,
-  `status` varchar(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '',
-  `trash` varchar(3) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT '',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = DYNAMIC;
+DROP TABLE IF EXISTS `roles_permissions`;
+CREATE TABLE `roles_permissions`  (
+  `role_id` bigint UNSIGNED NOT NULL,
+  `permission_id` bigint UNSIGNED NOT NULL,
+  PRIMARY KEY (`role_id`, `permission_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of tbl_users
+-- Records of roles_permissions
 -- ----------------------------
-INSERT INTO `tbl_users` VALUES (1, 1, 'Trần Hiệp', 'tranviethiepdz@gmail.com', '2022-04-13 10:18:57', '2022-04-14 03:45:19', '', '');
-INSERT INTO `tbl_users` VALUES (2, 2, 'Hiệp Cua', 'tranviethiep69@gmail.com', '2022-04-13 10:18:53', NULL, '', '');
-INSERT INTO `tbl_users` VALUES (4, 3, 'Hoàng Minh Châu', 'hoangminhchau@gmail.com', '2022-04-14 04:06:26', NULL, '', '');
-INSERT INTO `tbl_users` VALUES (5, NULL, 'Nguyễn Văn A', 'nguyenvanA@gmail.com', '2022-04-14 08:18:07', NULL, '', '');
-INSERT INTO `tbl_users` VALUES (6, NULL, 'Nguyễn Văn A', 'nguyenvanA@gmail.com', '2022-04-14 08:18:34', NULL, '', '');
-INSERT INTO `tbl_users` VALUES (7, 1, 'Nguyễn Văn A', 'nguyenvanA@gmail.com', '2022-04-14 08:20:10', NULL, '', '');
-INSERT INTO `tbl_users` VALUES (8, 1, 'Nguyễn Chí Hiếu', 'chihieu@gmail.com', '2022-04-14 08:22:17', '2022-04-14 08:24:53', '', '');
-INSERT INTO `tbl_users` VALUES (9, 1, 'Hoàng Văn Từ', 'hoangvantu@gmail.com', NULL, '2022-04-14 08:24:53', '', '');
-INSERT INTO `tbl_users` VALUES (10, 2, 'Lê Tiên Long 1', 'letienlong1@gmail.com', '2022-04-14 12:17:44', '2022-04-14 12:38:26', '', '');
-INSERT INTO `tbl_users` VALUES (11, 2, 'Hồng Minh', 'hongminh@gmail.com', '2022-04-14 17:45:16', NULL, '', '');
-INSERT INTO `tbl_users` VALUES (12, 2, 'Trần Ngọc', 'tranngoc@gmail.com', '2022-04-14 17:45:31', NULL, '', '');
-INSERT INTO `tbl_users` VALUES (13, 3, 'nqvinh', 'nqvinh@gmail.com', '2022-04-14 17:45:47', NULL, '', '');
 
 -- ----------------------------
 -- Table structure for users
@@ -154,17 +181,44 @@ CREATE TABLE `users`  (
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `status` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `trash` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `status` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
-  `trash` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `users_email_unique`(`email`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (1, 'Tran Hiep', 'tranviethiepdz@gmail.com', NULL, '$2y$10$PmtIwEPukC3RkJ.4B56QjuMYBv/6Hev.tg5XF4jpqJ1ypcXYKhGsa', NULL, NULL, NULL, 'yes', 'no');
+
+-- ----------------------------
+-- Table structure for users_permissions
+-- ----------------------------
+DROP TABLE IF EXISTS `users_permissions`;
+CREATE TABLE `users_permissions`  (
+  `user_id` bigint UNSIGNED NOT NULL,
+  `permission_id` bigint UNSIGNED NOT NULL,
+  PRIMARY KEY (`user_id`, `permission_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of users_permissions
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for users_roles
+-- ----------------------------
+DROP TABLE IF EXISTS `users_roles`;
+CREATE TABLE `users_roles`  (
+  `user_id` bigint UNSIGNED NOT NULL,
+  `role_id` bigint UNSIGNED NOT NULL,
+  PRIMARY KEY (`user_id`, `role_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of users_roles
+-- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;
